@@ -34,6 +34,27 @@ $ cat test.edn | eq --no-colors
 
 #### Queries
 
+Queries are written in **edn** and all edn values represent some kind
+of query. "Atomic" values are self-evaluating and therefor ignores the
+input:
+
+```edn
+$ echo '"I will be ignored"' | eq ':foo'
+:foo
+
+$ cat test.edn | eq '42'
+42
+```
+
+The `(id)` query returns the input unchanged (this is the default
+query if none is specified):
+
+```edn
+$ echo '"Hello, world!"' | eq '(id)'
+"Hello, world!"
+```
+
+
 `(get <key>)` looks up `<key>` in the input by key or index.
 
 ```edn
