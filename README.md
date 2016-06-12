@@ -1,12 +1,12 @@
 # eq (edn query)
 
-**eq** (edn query) is a command line tool for edn processing and
-pretty printing. It is inspired by
-[jq](https://stedolan.github.io/jq/).
+**eq** (edn query) is a command line tool for
+[edn](https://github.com/edn-format/edn) processing and pretty
+printing. It is inspired by [jq](https://stedolan.github.io/jq/).
 
 ## Usage
 
-**eq** takes edn data on `stdin` and pretty prints it to `stdout`
+**eq** reads edn data from `stdin` and pretty prints it to `stdout`
 
 ```edn
 $ cat test.edn
@@ -30,11 +30,13 @@ If you don't want syntax coloring you can pass the `--no-colors` flag
 $ cat test.edn | eq --no-colors
 ```
 
+**eq** is designed to work well with other unix tools like `curl` and the
+  startup time should be instantaneous.
+
 #### Queries
 
 Queries are written in **edn** and all edn values represent some kind
-of query. "Atomic" values are self-evaluating and therefor ignore the
-input:
+of query. "Atomic" values are self-evaluating and ignore the input:
 
 ```edn
 $ echo '"I will be ignored"' | eq ':foo'
@@ -52,8 +54,7 @@ $ echo '"Hello, world!"' | eq '(id)'
 "Hello, world!"
 ```
 
-
-`(get <key>)` looks up `<key>` in the input by key or index.
+`(get key)` looks up `key` in the input by key or index.
 
 ```edn
 $ cat test.edn | eq '(get :baz)'
@@ -62,17 +63,16 @@ $ echo '[:a :b :c]' | eq '(get 2)'
 :c
 ```
 
-`(-> query1 query2)` pipes the output of `query1` to the input of `query2`.
+`(-> q1 q2)` pipes the output of `q1` to the input of `q2`.
 
 ```edn
 $ cat test.edn | eq '(-> (get :nested-maps) (get :works))'
 "fine"
 ```
 
-`[query1 query2 ... queryN]` will apply each query in the vector to
-  and collect the result in a vector. For example `[:foo :bar :baz]`
-  is a query with three subqueries which all happen to evaluate to
-  themselves.
+`[q1 q2 ... qn]` will apply each query in the vector to and collect
+  the result in a vector. For example `[:foo :bar :baz]` is a query
+  with three subqueries which all happen to evaluate to themselves.
 
 ```edn
 $ cat test.edn | eq '[(get :foo) (get :baz)]'
@@ -85,10 +85,10 @@ $ cat test.edn | eq '[(-> (get :nested-maps) (get :works)) :literal (get :boolea
 Similarly to wrapping queries in a vector, it's also possible to wrap them in a map:
 
 ```edn
-{key-query1 val-query1
- key-query2 val-query2
+{kq1 vq1
+ kq2 vq2
  ...
- key-queryN val-queryN
+ kqn vqn}
 ```
 
 Each of the sub queries are run on the input, and the result is
@@ -106,9 +106,9 @@ $ cat test.edn | eq '{(-> (get :nested-maps) (get :works)) (get :quux) :foo [1 2
  :foo [1 2 #{true false}]}
 ```
 
-`(map <filter>)` will apply the filter to each element of the
-  input. The output will be separate edn objects (i.e. many objects
-  will be printed to stdout, separated by newline):
+`(map q)` will apply the query `q` to each element of the input. The
+  output will be separate edn objects (i.e. many objects will be
+  printed to stdout, separated by newline):
 
 ```edn
 $ cat test.edn | eq '(map (id))'
@@ -121,13 +121,16 @@ $ cat test.edn | eq '(map (id))'
 [:nested-maps {:works "fine"}]
 ```
 
-Get all the keys and collect them in a vector:
+It is often useful to collect the results produced by `map` in a
+collection. The following example shows how to find all the keys in an
+input map:
 
 ```edn
 $ cat test.edn | eq '[(map (get 0))]'
 [:foo :baz :quux :foo.bar/baz
  :tagged :booleans :nested-maps]
 ```
+
 `map` will also work on vectors, lists and sets:
 
 ```edn
