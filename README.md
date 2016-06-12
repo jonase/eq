@@ -142,10 +142,11 @@ $ echo '[{:a 1 :b 2} {:a 3 :b 4}]' | eq '(map (get :a))'
 
 ## Build instructions
 
-No binaries are distributed yet. In the future I hope to distribute
-**eq** via package managers such as Homebrew but for now you need to
-build **eq** manually. Recent version of
-[opam](https://opam.ocaml.org) is required
+No pre-built binaries are available yet. In the future I hope to
+distribute **eq** via package managers such as Homebrew but for now
+you need to build **eq** manually.
+
+Recent version of [opam](https://opam.ocaml.org) is required
 
 * [easy-format](http://mjambon.com/easy-format.html) is used for
   pretty printing and can be installed with `opam install easy-format`
