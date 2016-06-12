@@ -166,8 +166,6 @@ $ mv eq.native eq
 and move `eq` to somewhere on your `$PATH`
 
 
+## License
 
-
-
-
-(c) 2016 Jonas Enlund
+MIT Licensed. Copyright © 2016 Jonas Enlund
