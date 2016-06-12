@@ -4,7 +4,7 @@ and primop =
   | Get of Edn.t
   | Pipe of filter * filter
   | Split of filter * filter
-  | Explode
+  | Map of filter
   | CollectVector of filter list
   | CollectMap of (filter * filter) list
   | PassThrough of Edn.t
@@ -12,10 +12,10 @@ and primop =
 let rec make_primop_filter (op:Edn.t) args  =
   match (op, args) with
     (`Symbol (None, "id"), []) -> Id
-  | (`Symbol (None, "map"), []) -> Explode
   | (`Symbol (None, "get"), arg::[]) -> Get arg
   | (`Symbol (None, "->"), filter1::filter2::[]) -> Pipe (make_filter filter1, make_filter filter2)
   | (`Symbol (None, "&"), filter1::filter2::[]) -> Split (make_filter filter1, make_filter filter2)
+  | (`Symbol (None, "map"), filter::[]) -> Map (make_filter filter)
   | _ -> print_string "Unkonwn primop"; assert false
 and make_filter (filter:Edn.t) =
   match filter with
@@ -51,8 +51,6 @@ let lookup key (value:Edn.t) =
   | `Set xs -> lookup_set key xs
   | _ -> `Null
 
-
-
 let mapcat f list =
   List.concat (List.map f list)
 
@@ -65,22 +63,28 @@ let rec apply_filter filter (value:Edn.t) =
   | Split (filter1, filter2) -> let result1 = apply_filter filter1 value in
                                 let result2 = apply_filter filter2 value in
                                 List.concat [result1; result2]
-  | Explode -> (match value with
-                  `List xs -> xs
-                | `Vector xs -> xs
-                | `Set xs -> xs
-                | `Assoc kvs -> List.map (fun (k, v) -> (`Vector [k; v])) kvs
-                | rest -> [rest])
+  | Map filter -> apply_map filter value
   | CollectVector fs -> let result = List.concat (List.map (fun f -> apply_filter f value) fs) in
                         [`Vector result]
   | CollectMap fs -> let result = List.map (fun (kf, vf) -> (List.hd (apply_filter kf value), List.hd (apply_filter vf value))) fs in
                      [`Assoc result]
   | PassThrough pvalue -> [pvalue]
+and apply_map filter (value:Edn.t) =
+  match value with
+    `List xs -> List.concat (List.map (apply_filter filter) xs)
+  | `Vector xs -> List.concat (List.map (apply_filter filter) xs)
+  | `Set xs -> List.concat (List.map (apply_filter filter) xs)
+  | `Assoc kvs -> List.concat
+                    (List.map
+                       (fun (k, v) ->
+                         apply_filter filter (`Vector [k;v]))
+                       kvs)
+  | rest -> apply_filter filter rest
 
 
 let v = read "{:foo {:bar 1}}"
 let f = make_filter (read "[(& (get :foo) (get :bar))]")
 let f = make_filter (read "{:a (-> (get :foo) (get :bar))}")
-let f = make_filter (read "(map)")
+let f = make_filter (read "(map (id))")
 
 let r = apply_filter f (read "[1,2,3,4]")

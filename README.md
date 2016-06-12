@@ -57,11 +57,36 @@ $ cat test/test.edn | eq '[(-> (get :nested-maps) (get :works)) :literal (get :b
 ["fine" :literal #{true false}]
 ```
 
-* `(map)` will split the input and outputs one value per element in
-  the collection (Name & syntax for this important operator TBD)
+Similarly to wrapping queries in a vector, it's also possible to wrap them in a map:
 
 ```edn
-$ cat test/test.edn | ./eq.native '(map)'
+{key-query1 val-query1
+ key-query2 val-query2
+ ...
+ key-queryN val-queryN
+```
+
+Each of the sub queries are run on the input, and the result is
+collected in the map. Some examples:
+
+```edn
+$ cat test/test.edn | ./eq.native '{:foo :bar}'
+{:foo :bar}
+
+$ cat test/test.edn | ./eq.native '{:foo (get :foo)}'
+{:foo "Lorem ipsum dolor sit amet"}
+
+$ cat test/test.edn | ./eq.native '{(-> (get :nested-maps) (get :works)) (get :quux) :foo [1 2 (get :booleans)]}'
+{"fine" #inst "2016-06-11"
+ :foo [1 2 #{true false}]}
+```
+
+`(map <filter>)` will apply the filter to each element of the
+  input. The output will be separate edn objects (i.e. many objects
+  will be printed to stdout, separated by newline):
+
+```edn
+$ cat test/test.edn | ./eq.native '(map (id))'
 [:foo "Lorem ipsum dolor sit amet"]
 [:baz [1 1 2 3 5 8 13]]
 [:quux #inst "2016-06-11"]
@@ -71,28 +96,18 @@ $ cat test/test.edn | ./eq.native '(map)'
 [:nested-maps {:works "fine"}]
 ```
 
-Note that we get many edn values printed to stdout. Combined with `->`
-and `get` we can print the map keys:
+Get all the keys and collect them in a vector:
 
 ```edn
-$cat test/test.edn | ./eq.native '(-> (map) (get 0))'
-:foo
-:baz
-:quux
-:foo.bar/baz
-:tagged
-:booleans
-:nested-maps
-```
-
-and finally, we can collect all the keys in a vector to get a single
-output:
-
-```edn
-$cat test/test.edn | ./eq.native '[(-> (map) (get 0))]'
+$ cat test/test.edn | ./eq.native '[(map (get 0))]'
 [:foo :baz :quux :foo.bar/baz
  :tagged :booleans :nested-maps]
 ```
+
+`map` is really useful with any sequence of data. Say, for example,
+that you have a datomic schema edn file and you want to print all the
+idents and entity types. This can be achieved with an **eq** query
+like `[(map {:ident (get :db/ident) :type (get :db/valueType)})]`
 
 
 
