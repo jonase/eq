@@ -24,25 +24,20 @@ and make_filter (filter:Edn.t) =
   | `Assoc xs -> CollectMap (List.map (fun (k, v) -> (make_filter k, make_filter v)) xs)
   | filter_value -> PassThrough filter_value
 
-let read = Edn.from_string
-
 let rec lookup_map key kvs =
   match kvs with
     (k,v)::tl -> if k = key then v else lookup_map key tl
    | [] -> `Null
-
 
 let lookup_seq key xs =
   match key with
     `Int n -> List.nth xs n
   | _ -> `Null
 
-
 let lookup_set key xs =
   if List.mem key xs
   then key
   else `Null
-
 
 let lookup key (value:Edn.t) =
   match value with
@@ -80,11 +75,3 @@ and apply_map filter (value:Edn.t) =
                          apply_filter filter (`Vector [k;v]))
                        kvs)
   | rest -> apply_filter filter rest
-
-
-let v = read "{:foo {:bar 1}}"
-let f = make_filter (read "[(& (get :foo) (get :bar))]")
-let f = make_filter (read "{:a (-> (get :foo) (get :bar))}")
-let f = make_filter (read "(map (id))")
-
-let r = apply_filter f (read "[1,2,3,4]")
