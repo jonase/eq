@@ -1,0 +1,6 @@
+S src
+
+B _build/src
+
+PKG Edn
+PKG easy-format
