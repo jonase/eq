@@ -25,6 +25,7 @@ let color_scheme = if !use_colors
                    then Pp.edn_color_scheme
                    else Pp.edn_no_color_scheme
 
+
 let edns = Filter.apply_filter !filter (read_edn_from_stdin ())
 
 let _ = List.iter (fun edn -> Easy_format.Pretty.to_stdout (Pp.format color_scheme edn);

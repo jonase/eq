@@ -57,6 +57,46 @@ $ cat test/test.edn | eq '[(-> (get :nested-maps) (get :works)) :literal (get :b
 ["fine" :literal #{true false}]
 ```
 
+* `(map)` will split the input and outputs one value per element in
+  the collection (Name & syntax for this important operator TBD)
+
+```
+$ cat test/test.edn | ./eq.native '(map)'
+[:foo "Lorem ipsum dolor sit amet"]
+[:baz [1 1 2 3 5 8 13]]
+[:quux #inst "2016-06-11"]
+[:foo.bar/baz 3.14159]
+[:tagged #foo/bar [1 2]]
+[:booleans #{true false}]
+[:nested-maps {:works "fine"}]
+```
+
+Note that we get many edn values printed to stdout. Combined with `->`
+and `get` we can print the map keys:
+
+```
+cat test/test.edn | ./eq.native '(-> (map) (get 0))'
+:foo
+:baz
+:quux
+:foo.bar/baz
+:tagged
+:booleans
+:nested-maps
+```
+
+and finally, we can collect all the keys in a vector to get a single
+output:
+
+```
+$cat test/test.edn | ./eq.native '[(-> (map) (get 0))]'
+[:foo :baz :quux :foo.bar/baz
+ :tagged :booleans :nested-maps]
+```
+
+
+
+
 ## Build instructions
 
 Recent version of [opam](https://opam.ocaml.org) is required
