@@ -17,10 +17,11 @@ $ cd ocaml-edn
 $ make install
 ```
 
-* Clone the eq repo and build the binary
+* Clone the [eq](https://github.com/jonase/eq) repo and build the
+  binary
 
 ```
-$ git clone https://githy.com/jonase/eq
+$ git clone https://github.com/jonase/eq
 $ cd eq
 $ ocamlbuild -use-ocamlfind src/eq.native
 $ mv eq.native eq
@@ -30,3 +31,6 @@ and move `eq` to somewhere on your `$PATH`
 
 
 ## Usage
+
+
+(c) 2016 Jonas Enlund
