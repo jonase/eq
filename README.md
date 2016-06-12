@@ -1,5 +1,8 @@
 # eq (edn query)
 
+**eq** (edn query) is a command line tool for edn processing and
+pretty printing inspired by [jq](https://stedolan.github.io/jq/).
+
 ## Build instructions
 
 Recent version of [opam](https://opam.ocaml.org) is required
