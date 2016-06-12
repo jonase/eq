@@ -7,13 +7,13 @@ pretty printing inspired by [jq](https://stedolan.github.io/jq/).
 
 **eq** takes edn on `stdin` and pretty prints it to `stdout`
 
-```
+```edn
 $ cat test/test.edn
 {:foo "Lorem ipsum dolor sit amet" :baz [1 1 2 3 5 8 13] :quux #inst "2016-06-11" :foo.bar/baz 3.14159 :tagged #foo/bar [1 2] :booleans #{true false} :nested-maps {:works "fine"}}
 ```
 
-```
-cat test/test.edn | eq
+```edn
+$ cat test/test.edn | eq
 {:foo "Lorem ipsum dolor sit amet"
  :baz [1 1 2 3 5 8 13]
  :quux #inst "2016-06-11"
@@ -25,7 +25,7 @@ cat test/test.edn | eq
 
 If you don't want syntax coloring you can pass the `--no-colors` flag
 
-```
+```edn
 $ cat test/test.edn | eq --no-colors
 ```
 
@@ -33,7 +33,7 @@ $ cat test/test.edn | eq --no-colors
 
 * `(get <key>)` looks up `<key>` in the input by key or index.
 
-```
+```edn
 $ cat test/test.edn | eq '(get :baz)'
 [1 1 2 3 5 8 13]
 $ echo '[:a :b :c]' | eq '(get 2)'
@@ -42,7 +42,7 @@ $ echo '[:a :b :c]' | eq '(get 2)'
 
 * `(-> query1 query2)` pipes the output of `query 1` to the input of `query2`.
 
-```
+```edn
 $ cat test/test.edn | eq '(-> (get :nested-maps) (get :works))'
 "fine"
 ```
@@ -52,7 +52,7 @@ $ cat test/test.edn | eq '(-> (get :nested-maps) (get :works))'
   :bar :baz]` is a query with three subqueries which all happen to
   evaluate to themselves.
 
-```
+```edn
 $ cat test/test.edn | eq '[(-> (get :nested-maps) (get :works)) :literal (get :booleans)]'
 ["fine" :literal #{true false}]
 ```
@@ -60,7 +60,7 @@ $ cat test/test.edn | eq '[(-> (get :nested-maps) (get :works)) :literal (get :b
 * `(map)` will split the input and outputs one value per element in
   the collection (Name & syntax for this important operator TBD)
 
-```
+```edn
 $ cat test/test.edn | ./eq.native '(map)'
 [:foo "Lorem ipsum dolor sit amet"]
 [:baz [1 1 2 3 5 8 13]]
@@ -74,8 +74,8 @@ $ cat test/test.edn | ./eq.native '(map)'
 Note that we get many edn values printed to stdout. Combined with `->`
 and `get` we can print the map keys:
 
-```
-cat test/test.edn | ./eq.native '(-> (map) (get 0))'
+```edn
+$cat test/test.edn | ./eq.native '(-> (map) (get 0))'
 :foo
 :baz
 :quux
@@ -88,7 +88,7 @@ cat test/test.edn | ./eq.native '(-> (map) (get 0))'
 and finally, we can collect all the keys in a vector to get a single
 output:
 
-```
+```edn
 $cat test/test.edn | ./eq.native '[(-> (map) (get 0))]'
 [:foo :baz :quux :foo.bar/baz
  :tagged :booleans :nested-maps]
