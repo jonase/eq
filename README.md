@@ -153,12 +153,13 @@ Recent version of [opam](https://opam.ocaml.org) is required
 
 * [ocaml-edn](https://github.com/prepor/ocaml-edn) is used for edn
   parsing. This library is not available in the main opam repository
-  and needs to be built manually.
+  and needs to be pinned manually.
 
 ```
-$ git clone https://github.com/prepor/ocaml-edn
-$ cd ocaml-edn
-$ make install
+$ opam pin add edn https://github.com/prepor/ocaml-edn
+Package edn does not exist, create as a NEW package ? [Y/n] y
+edn is now git-pinned to https://github.com/prepor/ocaml-edn.git
+[… Installation output excluded …]
 ```
 
 * Clone the [eq](https://github.com/jonase/eq) repo and build the
