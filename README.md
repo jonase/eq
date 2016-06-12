@@ -6,7 +6,7 @@ pretty printing. It is inspired by
 
 ## Usage
 
-**eq** takes edn on `stdin` and pretty prints it to `stdout`
+**eq** takes edn data on `stdin` and pretty prints it to `stdout`
 
 ```edn
 $ cat test.edn
@@ -30,12 +30,10 @@ If you don't want syntax coloring you can pass the `--no-colors` flag
 $ cat test.edn | eq --no-colors
 ```
 
-**eq** can also process the edn passed to it via a **query** argument: `eq '<some-query>'`.
-
 #### Queries
 
 Queries are written in **edn** and all edn values represent some kind
-of query. "Atomic" values are self-evaluating and therefor ignores the
+of query. "Atomic" values are self-evaluating and therefor ignore the
 input:
 
 ```edn
@@ -64,7 +62,7 @@ $ echo '[:a :b :c]' | eq '(get 2)'
 :c
 ```
 
-`(-> query1 query2)` pipes the output of `query 1` to the input of `query2`.
+`(-> query1 query2)` pipes the output of `query1` to the input of `query2`.
 
 ```edn
 $ cat test.edn | eq '(-> (get :nested-maps) (get :works))'
@@ -72,11 +70,14 @@ $ cat test.edn | eq '(-> (get :nested-maps) (get :works))'
 ```
 
 `[query1 query2 ... queryN]` will apply each query in the vector to
-  the input and collect the result in a vector. For example `[:foo
-  :bar :baz]` is a query with three subqueries which all happen to
-  evaluate to themselves.
+  and collect the result in a vector. For example `[:foo :bar :baz]`
+  is a query with three subqueries which all happen to evaluate to
+  themselves.
 
 ```edn
+$ cat test.edn | eq '[(get :foo) (get :baz)]'
+["Lorem ipsum dolor sit amet" [1 1 2 3 5 8 13]]
+
 $ cat test.edn | eq '[(-> (get :nested-maps) (get :works)) :literal (get :booleans)]'
 ["fine" :literal #{true false}]
 ```
@@ -91,7 +92,7 @@ Similarly to wrapping queries in a vector, it's also possible to wrap them in a 
 ```
 
 Each of the sub queries are run on the input, and the result is
-collected in the map. Some examples:
+collected in a map. Some examples:
 
 ```edn
 $ cat test.edn | eq '{:foo :bar}'
@@ -127,11 +128,13 @@ $ cat test.edn | eq '[(map (get 0))]'
 [:foo :baz :quux :foo.bar/baz
  :tagged :booleans :nested-maps]
 ```
+`map` will also work on vectors, lists and sets:
 
-`map` is really useful with any sequence of data. Say, for example,
-that you have a datomic schema edn file and you want to print all the
-idents and entity types. This can be achieved with an **eq** query
-like `[(map {:ident (get :db/ident) :type (get :db/valueType)})]`
+```edn
+$ echo '[{:a 1 :b 2} {:a 3 :b 4}]' | eq '(map (get :a))'
+1
+3
+```
 
 ## Build instructions
 
