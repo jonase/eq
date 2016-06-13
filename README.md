@@ -156,7 +156,7 @@ Recent version of [opam](https://opam.ocaml.org) is required
   and needs to be pinned manually.
 
 ```
-$ opam pin add edn https://github.com/prepor/ocaml-edn
+$ opam pin add edn https://github.com/prepor/ocaml-edn.git
 Package edn does not exist, create as a NEW package ? [Y/n] y
 edn is now git-pinned to https://github.com/prepor/ocaml-edn.git
 [… Installation output excluded …]
