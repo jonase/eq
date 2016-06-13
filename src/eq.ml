@@ -10,10 +10,10 @@ let read_edn_from_stdin () =
 
 let _ =
   let use_colors = ref true in
-  let filter = ref Filter.Id in
+  let query = ref Query.Id in
 
-  let set_filter s =
-    filter := Filter.make_filter (Edn.from_string s) in
+  let set_query s =
+    query := Query.make_query (Edn.from_string s) in
 
   let cmd_args_spec =
     [("--no-colors", Arg.Clear use_colors, "Disable syntax highlighting")] in
@@ -21,13 +21,13 @@ let _ =
   let usage_msg =
     "EQ (edn-query) is an edn processor & pretty printer. Inspired by jq (https://stedolan.github.io/jq/)" in
 
-  Arg.parse cmd_args_spec set_filter usage_msg;
+  Arg.parse cmd_args_spec set_query usage_msg;
 
   let color_scheme = if !use_colors
                      then Pp.edn_color_scheme
                      else Pp.edn_no_color_scheme in
 
-  let edns = Filter.apply_filter !filter (read_edn_from_stdin ()) in
+  let edns = Query.apply_query !query (read_edn_from_stdin ()) in
 
   List.iter (fun edn -> Easy_format.Pretty.to_stdout (Pp.format color_scheme edn);
                         print_newline ())
