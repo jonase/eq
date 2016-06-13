@@ -160,20 +160,13 @@ $ opam pin add edn https://github.com/prepor/ocaml-edn.git
 Package edn does not exist, create as a NEW package ? [Y/n] y
 edn is now git-pinned to https://github.com/prepor/ocaml-edn.git
 [… Installation output excluded …]
+$ opam pin add eq https://github.com/jonase/eq.git
+Package eq does not exist, create as a NEW package ? [Y/n] y
+eq is now git-pinned to https://github.com/jonase/eq.git
+[… Installation output excluded …]
 ```
 
-* Clone the [eq](https://github.com/jonase/eq) repo and build the
-  binary
-
-```
-$ git clone https://github.com/jonase/eq
-$ cd eq
-$ ocamlbuild -use-ocamlfind src/eq.native
-$ mv eq.native eq
-```
-
-and move `eq` to somewhere on your `$PATH`
-
+`eq` is now in the `bin` directory of OPAM.
 
 ## License
 
