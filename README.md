@@ -146,10 +146,7 @@ No pre-built binaries are available yet. In the future I hope to
 distribute **eq** via package managers such as Homebrew but for now
 you need to build **eq** manually.
 
-Recent version of [opam](https://opam.ocaml.org) is required
-
-* [easy-format](http://mjambon.com/easy-format.html) is used for
-  pretty printing and can be installed with `opam install easy-format`
+* A recent version of [opam](https://opam.ocaml.org) is required
 
 * [ocaml-edn](https://github.com/prepor/ocaml-edn) is used for edn
   parsing. This library is not available in the main opam repository
@@ -160,6 +157,11 @@ $ opam pin add edn https://github.com/prepor/ocaml-edn.git
 Package edn does not exist, create as a NEW package ? [Y/n] y
 edn is now git-pinned to https://github.com/prepor/ocaml-edn.git
 [… Installation output excluded …]
+```
+
+* Finally install `eq` with
+
+```
 $ opam pin add eq https://github.com/jonase/eq.git
 Package eq does not exist, create as a NEW package ? [Y/n] y
 eq is now git-pinned to https://github.com/jonase/eq.git
