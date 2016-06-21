@@ -157,7 +157,8 @@ eq is now git-pinned to https://github.com/jonase/eq.git
 [… Installation output excluded …]
 ```
 
-`eq` is now in the `bin` directory of OPAM.
+`eq` is now in the opam `bin` directory (for example
+`~/.opam/4.03.0/bin`).
 
 ## License
 
